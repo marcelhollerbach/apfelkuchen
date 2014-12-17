@@ -13,7 +13,17 @@ public class Shell {
       paulSmith.start();
       System.out.println(paulSmith.getContent());
       Parser p2 = new Parser(paulSmith.getContent());
-      LinkedList<Tag> l = p2.parseLinks();
+      p2.start();
+      while (p2.isAlive()) {
+         System.out.println("Waiting");
+         try {
+            Thread.sleep(100);
+         } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+         }
+      }
+      LinkedList<Tag> l = p2.getParsedTags();
       for (Tag tag : l) {
          System.out.println("LINK >" + tag.getAttr());
       }

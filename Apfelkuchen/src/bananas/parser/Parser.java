@@ -2,7 +2,7 @@ package bananas.parser;
 
 import java.util.LinkedList;
 
-public class Parser {
+public class Parser extends Thread {
    private String html;
    private String tag = "", attr, content;
 
@@ -12,15 +12,17 @@ public class Parser {
    public static final int STATE_IN_TAG_START = 3;
    public static final int STATE_FAULTY_PART = 4;
 
-   public static final String[] wontclose = {"br", "meta", "hr", "img", "wbr",
-         "area", "img", "input", "option", "link", "source" };
+   public static final String[] TAGS_WONT_CLOSE = {"br", "meta", "hr", "img",
+         "wbr", "area", "img", "input", "option", "link", "source" };
+   public static final String[] TAGS_IGNORE = {"script" };
+   private LinkedList<Tag> parsedTags;
 
    public Parser(String html) {
       this.html = html;
       attrReset();
    }
 
-   public static int seqAppeares(String part, String content) {
+   private static int seqAppeares(String part, String content) {
       int i = 0;
       int lindex = -1;
       do {
@@ -30,7 +32,7 @@ public class Parser {
       return i;
    }
 
-   public LinkedList<Tag> parseString(String txt) throws Exception {
+   private LinkedList<Tag> parseString(String txt) throws Exception {
       LinkedList<Tag> tags = new LinkedList<Tag>();
       int state = -1;
       int laststable = 0;
@@ -111,13 +113,15 @@ public class Parser {
       return tags;
    }
 
-   public LinkedList<Tag> parse(String txt) throws Exception {
+   private LinkedList<Tag> parse(String txt) throws Exception {
 
       LinkedList<Tag> result = new LinkedList<Tag>();
       LinkedList<Tag> res = parseString(txt);
       if ((res == null) || res.isEmpty())
          return null;
       for (Tag tag : res) {
+         if (ignore(tag.getName()))
+            continue;
          LinkedList<Tag> r = parse(tag.getContent());
          result.add(tag);
          if (r != null)
@@ -126,7 +130,7 @@ public class Parser {
       return result;
    }
 
-   public LinkedList<Tag> parseLinks() {
+   public void parseLinks() {
       LinkedList<Tag> tags = null;
       LinkedList<Tag> result = new LinkedList<Tag>();
       try {
@@ -138,11 +142,19 @@ public class Parser {
          if (tag.getName().equals("a"))
             result.add(tag);
       }
-      return tags;
+      parsedTags = tags;
    }
 
    private static boolean wontClose(String tag) {
-      for (String string : wontclose) {
+      for (String string : TAGS_WONT_CLOSE) {
+         if (string.equals(tag))
+            return true;
+      }
+      return false;
+   }
+
+   private static boolean ignore(String tag) {
+      for (String string : TAGS_IGNORE) {
          if (string.equals(tag))
             return true;
       }
@@ -153,6 +165,15 @@ public class Parser {
       tag = "";
       attr = "";
       content = "";
+   }
+
+   @Override
+   public void run() {
+      parseLinks();
+   }
+
+   public LinkedList<Tag> getParsedTags() {
+      return parsedTags;
    }
 
    private void pushTag(LinkedList<Tag> tags) {
