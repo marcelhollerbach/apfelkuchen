@@ -9,19 +9,17 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 
-public class Connector {
+public class Connector extends Job {
     private URL url;
-
     public String content = "";
 
-    public Connector(String url) {
+    public Connector(String url, JobListener l) {
+        super(l);
         try {
             this.url = new URL(url);
         } catch (MalformedURLException e) {
-
             e.printStackTrace();
         }
-
     }
 
     public String getContent() {
@@ -32,29 +30,29 @@ public class Connector {
         URLConnection connection;
         InputStream in = null;
         try {
-
             connection = url.openConnection();
             in = connection.getInputStream();
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(in));
             while (reader.ready()) {
                 content += reader.readLine();
-
             }
-
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-
             try {
                 in.close();
             } catch (IOException e2) {
                 System.out.println("Bananananas!");
-
             }
         }
+    }
 
+    @Override
+    public void run() {
+        start();
+        isDone(getContent());
     }
 }
