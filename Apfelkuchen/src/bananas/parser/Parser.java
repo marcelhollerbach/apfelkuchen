@@ -1,10 +1,14 @@
 package bananas.parser;
 
 import java.util.LinkedList;
+import java.util.concurrent.Callable;
 
-public class Parser extends Thread {
+import bananas.Job;
+import bananas.JobListener;
+
+public class Parser extends Job {
    private String html;
-   private String tag = "", attr, content;
+   private String tag, attr, content;
 
    public static final int STATE_IN_TAG_CONTENT = 0;
    public static final int STATE_IN_ATTR = 1;
@@ -17,7 +21,8 @@ public class Parser extends Thread {
    public static final String[] TAGS_IGNORE = {"script" };
    private LinkedList<Tag> parsedTags;
 
-   public Parser(String html) {
+   public Parser(String html, JobListener l) {
+      super(l);
       this.html = html;
       attrReset();
    }
@@ -170,8 +175,9 @@ public class Parser extends Thread {
    @Override
    public void run() {
       parseLinks();
+      isDone(parsedTags);
    }
-
+   
    public LinkedList<Tag> getParsedTags() {
       return parsedTags;
    }
