@@ -9,7 +9,7 @@ public class Database {
 
    public LinkedList<String> getPendingFiles() {
       LinkedList<String> res = new LinkedList<String>();
-      res.add("www.google.de");
+      res.add("http://www.google.de");
       return res;
    }
 

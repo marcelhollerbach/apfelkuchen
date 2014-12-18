@@ -15,7 +15,7 @@ public class ThreadQueue<E> {
         this.executor = new ThreadPoolExecutor(5, 5, 0, TimeUnit.SECONDS, queue);
     }
 
-    public void schedule(Runnable task) {
+    public void schedule(Job task) {
         executor.submit(task);
     }
 
