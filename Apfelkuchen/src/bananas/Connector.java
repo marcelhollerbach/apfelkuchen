@@ -44,8 +44,8 @@ public class Connector extends Job {
         } finally {
             try {
                 in.close();
-            } catch (IOException e2) {
-                System.out.println("Bananananas!");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
