@@ -1,12 +1,21 @@
 package bananas.db;
 
-
 public class Server {
 
-   public Database b;
+   private Database b;
+   private String dns;
 
-   public Server(Database b) {
+   public Server(Database b, String dns) {
       this.b = b;
+      setDns(dns);
+   }
+
+   public String getDns() {
+      return dns;
+   }
+
+   public void setDns(String dns) {
+      this.dns = dns;
    }
 
    public ServerFile getFile(String file) {
@@ -14,6 +23,6 @@ public class Server {
    }
 
    public void addFile(String file) {
-
+      b.addedFile(file);
    }
 }

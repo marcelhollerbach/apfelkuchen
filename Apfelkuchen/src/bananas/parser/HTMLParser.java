@@ -1,13 +1,19 @@
 package bananas.parser;
 
 import java.util.LinkedList;
-import java.util.concurrent.Callable;
 
 import bananas.Job;
 import bananas.JobListener;
 
-public class Parser extends Job {
-   private String html;
+/**
+ * This just parses simple html code It will move tags into TAG object with tag
+ * name, attributes, and the tag name
+ * 
+ * @author buh5m4n
+ *
+ */
+public class HTMLParser extends Job {
+   private Side side;
    private String tag, attr, content;
 
    public static final int STATE_IN_TAG_CONTENT = 0;
@@ -21,9 +27,9 @@ public class Parser extends Job {
    public static final String[] TAGS_IGNORE = {"script" };
    private LinkedList<Tag> parsedTags;
 
-   public Parser(String html, JobListener l) {
+   public HTMLParser(Side side, JobListener l) {
       super(l);
-      this.html = html;
+      this.side = side;
       attrReset();
    }
 
@@ -139,7 +145,7 @@ public class Parser extends Job {
       LinkedList<Tag> tags = null;
       LinkedList<Tag> result = new LinkedList<Tag>();
       try {
-         tags = parse(html);
+         tags = parse(side.getContent());
       } catch (Exception e) {
          e.printStackTrace();
       }
@@ -175,9 +181,10 @@ public class Parser extends Job {
    @Override
    public void run() {
       parseLinks();
-      isDone(parsedTags);
+      side.setTags(parsedTags);
+      isDone(side);
    }
-   
+
    public LinkedList<Tag> getParsedTags() {
       return parsedTags;
    }

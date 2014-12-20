@@ -1,5 +1,7 @@
 package bananas;
 
+import bananas.parser.Side;
+
 public interface JobListener {
-   public void idDone(Object result);
+   public void idDone(Side result);
 }

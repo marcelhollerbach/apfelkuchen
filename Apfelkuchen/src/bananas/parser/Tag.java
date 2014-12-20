@@ -2,13 +2,13 @@ package bananas.parser;
 
 public class Tag {
    private String name;
-   private String attr;
+   private Attributes attr;
    private String content;
 
    public Tag(String name, String attr, String content) {
       super();
       this.name = name;
-      this.attr = attr;
+      this.attr = new Attributes(attr);
       this.content = content;
    }
 
@@ -20,12 +20,12 @@ public class Tag {
       this.name = name;
    }
 
-   public String getAttr() {
+   public Attributes getAttr() {
       return attr;
    }
 
    public void setAttr(String attr) {
-      this.attr = attr;
+      this.attr = new Attributes(attr);
    }
 
    public String getContent() {
